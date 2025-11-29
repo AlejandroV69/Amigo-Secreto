@@ -120,9 +120,6 @@ h1::before{content:'🎄';font-size:1.2rem}
 	100%{transform:translateY(0) scale(1);filter:brightness(0.9)}
 }
 
-/* Footer */
-.site-footer{display:block;text-align:center;color:var(--muted);font-size:0.95rem;margin:18px 0 28px 0}
-
 
 @media (max-width:600px){
 	.row{flex-direction:column}
