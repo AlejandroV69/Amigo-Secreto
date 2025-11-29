@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Amigo Secreto</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<main class="container">
+			<h1>Amigo Secreto</h1>
+
+			<section class="card"> 
+				<form id="add-form" class="row" autocomplete="off">
+					<input id="name-input" type="text" placeholder="Ingrese nombre y presione Añadir" />
+					<button id="add-btn" type="submit">Añadir</button>
+				</form>
+
+				<div class="controls">
+					<button id="shuffle-btn">Sortear</button>
+					<button id="clear-btn" class="danger">Borrar todo</button>
+				</div>
+
+				<ul id="participants" class="list"></ul>
+			</section>
+
+			<section class="card info">
+				<h2>Instrucciones</h2>
+				<ul>
+					<li>Agrega cualquier cantidad de participantes.</li>
+					<li>Presiona <strong>Sortear</strong> para generar las asignaciones (nadie se asignará a sí mismo).</li>
+					<li>Presiona <strong>Ver</strong> al lado de tu nombre para revelar solo tu asignado.</li>
+					<li>Los datos se guardan localmente en tu navegador.</li>
+				</ul>
+			</section>
+		</main>
+
+		<div id="toast" class="toast" aria-live="polite"></div>
+
+		<script src="main.js"></script>
+	</body>
+</html>
