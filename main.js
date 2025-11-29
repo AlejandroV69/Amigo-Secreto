@@ -12,6 +12,65 @@ const el = {
 let participants = [];
 let assignments = {}; // map id -> recipientId
 
+function colorFromString(str){
+	let h = 0;
+	for(let i=0;i<str.length;i++) h = (h<<5) - h + str.charCodeAt(i);
+	h = Math.abs(h);
+	// Paleta más navideña: mapear a rojo/verde/dorado
+	const pick = h % 3;
+	if(pick === 0) return `hsl(${10 + (h%20)} 78% 45%)`; // rojo
+	if(pick === 1) return `hsl(${120 + (h%20)} 60% 38%)`; // verde
+	return `hsl(${45 + (h%20)} 85% 50%)`; // dorado
+}
+
+function initialsOf(name){
+	const parts = name.trim().split(/\s+/).filter(Boolean);
+	if(parts.length===0) return '';
+	if(parts.length===1) return parts[0].slice(0,2).toUpperCase();
+	return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+}
+
+// --- Efecto nieve (genera elementos .snowflake) ---
+function createSnow(count = 30){
+	const body = document.body;
+	for(let i=0;i<count;i++){
+		const s = document.createElement('div');
+		s.className = 'snowflake';
+		s.textContent = '❄';
+		const left = Math.random()*100;
+		s.style.left = left + 'vw';
+		const delay = Math.random()*-20;
+		const duration = 6 + Math.random()*8;
+		const size = 8 + Math.random()*18;
+		s.style.fontSize = size + 'px';
+		s.style.animationDuration = `${duration}s, ${2 + Math.random()*3}s`;
+		s.style.animationDelay = `${delay}s, 0s`;
+		body.appendChild(s);
+		// quitar después de caer
+		setTimeout(()=>{ s.remove(); }, (duration + Math.abs(delay) + 1)*1000);
+	}
+	// repetir de vez en cuando para efecto continuo
+	setTimeout(()=>createSnow(Math.max(8, Math.floor(count*0.3))), 4000 + Math.random()*4000);
+}
+
+// --- Confetti simple al sortear ---
+function launchConfetti(count = 40){
+	const colors = ['#b91c1c','#065f46','#f59e0b','#ffffff','#c026d3'];
+	for(let i=0;i<count;i++){
+		const c = document.createElement('div');
+		c.className = 'confetti';
+		c.style.background = colors[Math.floor(Math.random()*colors.length)];
+		const tx = (Math.random()-0.5) * 120 + (Math.random()>0.5?100:-100);
+		c.style.setProperty('--tx', tx + 'px');
+		c.style.left = (50 + (Math.random()-0.5)*40) + '%';
+		c.style.transform = `rotate(${Math.random()*360}deg)`;
+		c.style.width = (6 + Math.random()*10) + 'px';
+		c.style.height = (8 + Math.random()*12) + 'px';
+		document.body.appendChild(c);
+		setTimeout(()=>c.remove(), 1400 + Math.random()*400);
+	}
+}
+
 function saveParticipants(){
 	localStorage.setItem(LS_KEYS.PARTICIPANTS, JSON.stringify(participants));
 }
@@ -37,15 +96,25 @@ function render(){
 	participants.forEach((p, i) => {
 		const li = document.createElement('li');
 
+
 		const left = document.createElement('div');
 		left.className = 'participant-left';
+		const avatar = document.createElement('span');
+		avatar.className = 'avatar';
+		avatar.textContent = initialsOf(p.name);
+		avatar.style.backgroundColor = colorFromString(p.name + p.id);
+
+		const nameWrap = document.createElement('div');
+		nameWrap.className = 'name-wrap';
 		const name = document.createElement('div');
 		name.textContent = p.name;
 		const small = document.createElement('div');
 		small.className = 'small';
 		small.textContent = `ID: ${p.id.slice(-6)}`;
-		left.appendChild(name);
-		left.appendChild(small);
+		nameWrap.appendChild(name);
+		nameWrap.appendChild(small);
+		left.appendChild(avatar);
+		left.appendChild(nameWrap);
 
 		const right = document.createElement('div');
 		right.style.display = 'flex';
@@ -142,7 +211,9 @@ function generateAssignments(){
 	assignments = {};
 	for(let i=0;i<ids.length;i++) assignments[ids[i]] = shuffled[i];
 	saveAssignments();
-	showToast('Asignaciones generadas');
+	showToast('Asignaciones generadas 🎁');
+	// Confetti para celebrar
+	launchConfetti(36);
 }
 
 // Events
@@ -165,3 +236,5 @@ el.clearBtn.addEventListener('click', ()=>{
 
 // carga inicial
 loadParticipants(); loadAssignments(); render();
+// iniciar nieve suave
+createSnow(28);

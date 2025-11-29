@@ -1,8 +1,11 @@
 :root{
 	--bg:#f4f7fb;
 	--card:#ffffff;
-	--accent:#4f46e5;
-	--muted:#6b7280;
+	/* Paleta navideña */
+	--accent:#b91c1c; /* rojo */
+	--accent-2:#065f46; /* verde oscuro */
+	--accent-3:#f59e0b; /* dorado */
+	--muted:#4b5563;
 	--danger:#ef4444;
 }
 *{box-sizing:border-box}
@@ -10,7 +13,10 @@ html,body{height:100%}
 body{
 	margin:0;
 	font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-	background:linear-gradient(180deg,var(--bg),#fff);
+	background:
+		radial-gradient(1200px 400px at 10% 10%, rgba(79,70,229,0.08), transparent 10%),
+		radial-gradient(900px 300px at 90% 90%, rgba(6,182,212,0.06), transparent 12%),
+		linear-gradient(180deg,var(--bg),#fff);
 	color:#111827;
 }
 .container{
@@ -20,26 +26,74 @@ body{
 }
 h1{margin:0 0 12px 0;font-size:1.8rem}
 .card{
-	background:var(--card);
-	border-radius:10px;
-	padding:12px;
-	box-shadow:0 6px 18px rgba(15,23,42,0.06);
-	margin-bottom:16px;
+	background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.82));
+	border-radius:14px;
+	padding:14px;
+	box-shadow:0 10px 30px rgba(15,23,42,0.08);
+	margin-bottom:18px;
+	border:1px solid rgba(79,70,229,0.06);
 }
 .row{display:flex;gap:8px}
-input[type="text"]{flex:1;padding:10px;border-radius:8px;border:1px solid #e5e7eb}
-button{background:var(--accent);color:#fff;border:0;padding:0 12px;border-radius:8px;cursor:pointer}
-button.danger{background:var(--danger)}
+.container .row input[type="text"]{flex:1;padding:12px;border-radius:12px;border:1px solid rgba(15,23,42,0.06);box-shadow:inset 0 1px 2px rgba(16,24,40,0.02)}
+.container .row button{background:linear-gradient(90deg,var(--accent),#8b1b1b);color:#fff;border:0;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:600}
+.container .row button:active{transform:translateY(1px)}
 .controls{margin:12px 0;display:flex;gap:8px}
+.controls button{padding:10px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+.controls button#shuffle-btn{background:linear-gradient(90deg,var(--accent-2),var(--accent));color:#fff}
+.controls button#clear-btn{background:linear-gradient(90deg,var(--accent-3),#ef4444);color:#fff}
 .list{list-style:none;margin:0;padding:0}
-.list li{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:8px;border:1px solid #f1f5f9;margin-bottom:8px}
-.participant-left{display:flex;gap:8px;align-items:center}
+.list li{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:10px;border:1px solid rgba(15,23,42,0.03);margin-bottom:10px;background:linear-gradient(180deg,rgba(255,255,255,0.6),rgba(255,255,255,0.4))}
+.participant-left{display:flex;gap:12px;align-items:center}
+.avatar{width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:700;flex:0 0 44px;box-shadow:0 6px 18px rgba(2,6,23,0.08)}
+.name-wrap{display:flex;flex-direction:column}
+.name-wrap div:first-child{font-weight:700}
 .badge{background:#eef2ff;color:var(--accent);padding:6px 8px;border-radius:6px;font-size:0.9rem}
 .small{font-size:0.9rem;color:var(--muted)}
-.reveal{background:#10b981;padding:6px 8px;border-radius:6px;border:0;color:#fff}
-.hidden-assigned{margin-left:12px;font-weight:600}
+.reveal{background:linear-gradient(90deg,#10b981,#06b6d4);padding:8px 10px;border-radius:8px;border:0;color:#fff}
+.reveal:hover{filter:brightness(1.02)}
+.hidden-assigned{margin-left:12px;font-weight:700;color:var(--accent)}
 .toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;padding:10px 14px;border-radius:8px;display:none}
 .info ul{margin:0;padding-left:18px}
+
+/* small animations */
+.list li{transition:transform .15s ease, box-shadow .15s ease}
+.list li:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(2,6,23,0.08)}
+
+/* === Efectos navideños: nieve y confetti === */
+.snowflake{
+	position:fixed;
+	top:-10px;
+	z-index:1000;
+	pointer-events:none;
+	color: #fff;
+	font-size: 14px;
+	opacity: 0.9;
+	text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+	animation-name: fall, sway;
+	animation-iteration-count: 1, infinite;
+}
+
+@keyframes fall{
+	to { transform: translateY(110vh); opacity: 0.85; }
+}
+
+@keyframes sway{
+	0% { transform: translateX(0); }
+	50% { transform: translateX(18px); }
+	100% { transform: translateX(0); }
+}
+
+.confetti{
+	position:fixed;left:50%;top:30%;width:10px;height:14px;z-index:1200;pointer-events:none;opacity:0.95;transform-origin:center;animation: confetti-fall 1200ms linear forwards;
+}
+@keyframes confetti-fall{
+	to{ transform: translate3d(var(--tx,0px),110vh,0) rotateZ(720deg); opacity:0 }
+}
+
+/* más festivo en encabezado */
+h1{display:flex;align-items:center;gap:10px}
+h1::before{content:'🎄';font-size:1.2rem}
+
 
 @media (max-width:600px){
 	.row{flex-direction:column}
