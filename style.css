@@ -120,6 +120,16 @@ h1::before{content:'🎄';font-size:1.2rem}
 	100%{transform:translateY(0) scale(1);filter:brightness(0.9)}
 }
 
+/* Footer alineado con .container en pantallas grandes */
+.site-footer{
+	max-width:960px;
+	margin:18px auto 28px auto;
+	padding:0 16px;
+	text-align:center;
+	color:var(--muted);
+	font-size:0.95rem;
+}
+
 
 @media (max-width:600px){
 	.row{flex-direction:column}

@@ -147,11 +147,7 @@ function render(){
 		nameWrap.className = 'name-wrap';
 		const name = document.createElement('div');
 		name.textContent = p.name;
-		const small = document.createElement('div');
-		small.className = 'small';
-		small.textContent = `ID: ${p.id.slice(-6)}`;
 		nameWrap.appendChild(name);
-		nameWrap.appendChild(small);
 		left.appendChild(avatar);
 		left.appendChild(nameWrap);
 
@@ -171,12 +167,16 @@ function render(){
 			const r = participants.find(x=>x.id===assignedId);
 			const span = li.querySelector('.hidden-assigned');
 			if(span){
+				// Si ya está visible, ocultar y restaurar texto del botón
 				span.remove();
+				revealBtn.textContent = 'Ver';
 			} else {
+				// Mostrar asignado y cambiar texto del botón a 'Ocultar'
 				const s = document.createElement('span');
 				s.className = 'hidden-assigned';
 				s.textContent = r ? r.name : '—';
 				li.appendChild(s);
+				revealBtn.textContent = 'Ocultar';
 				// lanzar confetti al revelar la asignación
 				launchConfetti(20);
 			}
