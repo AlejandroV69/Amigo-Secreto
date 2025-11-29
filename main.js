@@ -30,8 +30,12 @@ function initialsOf(name){
 	return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
 }
 
-// --- Efecto nieve (genera elementos .snowflake) ---
-function createSnow(count = 30){
+// control de nieve (densidad y encendido)
+let snowEnabled = true;
+let snowDensity = 60; // 0..100
+let _snowInterval = null;
+
+function spawnSnow(count){
 	const body = document.body;
 	for(let i=0;i<count;i++){
 		const s = document.createElement('div');
@@ -39,19 +43,26 @@ function createSnow(count = 30){
 		s.textContent = '❄';
 		const left = Math.random()*100;
 		s.style.left = left + 'vw';
-		const delay = Math.random()*-20;
-		const duration = 6 + Math.random()*8;
+		const duration = 5 + Math.random()*7;
 		const size = 8 + Math.random()*18;
 		s.style.fontSize = size + 'px';
 		s.style.animationDuration = `${duration}s, ${2 + Math.random()*3}s`;
-		s.style.animationDelay = `${delay}s, 0s`;
+		s.style.animationDelay = `0s, 0s`;
 		body.appendChild(s);
-		// quitar después de caer
-		setTimeout(()=>{ s.remove(); }, (duration + Math.abs(delay) + 1)*1000);
+		setTimeout(()=>{ s.remove(); }, (duration + 1)*1000);
 	}
-	// repetir de vez en cuando para efecto continuo
-	setTimeout(()=>createSnow(Math.max(8, Math.floor(count*0.3))), 4000 + Math.random()*4000);
 }
+
+function startSnow(){
+	stopSnow();
+	if(!snowEnabled) return;
+	const perTick = Math.max(1, Math.round(snowDensity/12));
+	_snowInterval = setInterval(()=>{
+		spawnSnow(perTick);
+	}, 900);
+}
+
+function stopSnow(){ if(_snowInterval){ clearInterval(_snowInterval); _snowInterval = null; } }
 
 // --- Confetti simple al sortear ---
 function launchConfetti(count = 40){
@@ -70,6 +81,34 @@ function launchConfetti(count = 40){
 		setTimeout(()=>c.remove(), 1400 + Math.random()*400);
 	}
 }
+
+// --- Guirnalda y luces ---
+function setupGarland(){
+	const g = document.getElementById('garland');
+	if(!g) return;
+	// limpiar
+	g.innerHTML = '';
+	const string = document.createElement('div');
+	string.className = 'string';
+	g.appendChild(string);
+	const lights = 14;
+	const colors = ['#f43f5e','#065f46','#f59e0b','#10b981','#ec4899'];
+	for(let i=0;i<lights;i++){
+		const l = document.createElement('span');
+		l.className = 'light';
+		l.style.left = (5 + i*(90/(lights-1))) + '%';
+		l.style.position = 'absolute';
+		l.style.background = colors[i % colors.length];
+		// stagger animation
+		const delay = (i%5) * 120;
+		l.style.animationDelay = `${delay}ms`;
+		if(i%2===0) l.classList.add('blink');
+		g.appendChild(l);
+	}
+	// encender las luces por defecto
+	g.classList.add('active');
+}
+
 
 function saveParticipants(){
 	localStorage.setItem(LS_KEYS.PARTICIPANTS, JSON.stringify(participants));
@@ -138,6 +177,8 @@ function render(){
 				s.className = 'hidden-assigned';
 				s.textContent = r ? r.name : '—';
 				li.appendChild(s);
+				// lanzar confetti al revelar la asignación
+				launchConfetti(20);
 			}
 		});
 
@@ -212,8 +253,7 @@ function generateAssignments(){
 	for(let i=0;i<ids.length;i++) assignments[ids[i]] = shuffled[i];
 	saveAssignments();
 	showToast('Asignaciones generadas 🎁');
-	// Confetti para celebrar
-	launchConfetti(36);
+
 }
 
 // Events
@@ -236,5 +276,6 @@ el.clearBtn.addEventListener('click', ()=>{
 
 // carga inicial
 loadParticipants(); loadAssignments(); render();
-// iniciar nieve suave
-createSnow(28);
+// carga inicial de efectos
+setupGarland();
+startSnow();
